@@ -1,5 +1,12 @@
 import hashlib
+import hmac
+import os
 from datetime import datetime, timezone
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class AuditService:
@@ -7,9 +14,18 @@ class AuditService:
     Privacy-safe in-memory audit logger for the PrivAd prototype.
 
     Raw internal user identifiers are not stored directly.
+    A dedicated HMAC key is used for audit subject pseudonymization.
     """
 
     def __init__(self):
+        audit_secret = os.getenv("PRIVAD_AUDIT_SECRET_KEY")
+
+        if not audit_secret:
+            raise RuntimeError(
+                "PRIVAD_AUDIT_SECRET_KEY is not configured"
+            )
+
+        self.audit_secret = audit_secret.encode("utf-8")
         self._events = []
 
     def _privacy_safe_subject_id(
@@ -17,8 +33,12 @@ class AuditService:
         internal_user_id: str
     ) -> str:
 
-        digest = hashlib.sha256(
-            internal_user_id.encode("utf-8")
+        message = f"audit:{internal_user_id}".encode("utf-8")
+
+        digest = hmac.new(
+            self.audit_secret,
+            message,
+            hashlib.sha256
         ).hexdigest()
 
         return f"subject_{digest[:16]}"
