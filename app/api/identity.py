@@ -13,7 +13,7 @@ from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
 from app.services.identity_service import identity_service
 from app.security.auth import require_api_key
-
+from app.security.auth import require_role
 
 router = APIRouter(
     prefix="/v1/identity",
@@ -24,7 +24,7 @@ router = APIRouter(
 @router.post(
     "/pseudonymize",
     response_model=IdentityResponse,
-    dependencies=[Depends(require_api_key)]
+    dependencies=[Depends(require_role("identity"))]
 )
 def pseudonymize_identity(
     request: IdentityRequest,

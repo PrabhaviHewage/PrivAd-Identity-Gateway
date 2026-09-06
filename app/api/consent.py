@@ -5,7 +5,7 @@ from app.database.database import get_db
 from app.models.consent import ConsentRecord, ConsentDecision
 from app.services.consent_service import consent_service
 from app.security.auth import require_api_key
-
+from app.security.auth import require_role
 
 router = APIRouter(
     prefix="/v1/consent",
@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post(
     "/set",
     response_model=ConsentDecision,
-    dependencies=[Depends(require_api_key)]
+    dependencies=[Depends(require_role("consent"))]
 )
 def set_consent(
     record: ConsentRecord,
