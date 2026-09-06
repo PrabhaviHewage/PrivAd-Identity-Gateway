@@ -1,6 +1,3 @@
-import os
-
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -14,24 +11,12 @@ from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
-
-load_dotenv()
+from app.services.identity_service import identity_service
 
 
 router = APIRouter(
     prefix="/v1/identity",
     tags=["Identity"]
-)
-
-
-secret_key = os.getenv("PRIVAD_SECRET_KEY")
-
-if not secret_key:
-    raise RuntimeError("PRIVAD_SECRET_KEY is not configured")
-
-
-identity_service = IdentityService(
-    secret_key=secret_key
 )
 
 
@@ -80,10 +65,12 @@ def pseudonymize_identity(
             }
         )
 
-    pseudonymous_id = identity_service.generate_pseudonymous_id(
+    pseudonymous_id, key_version = (
+    identity_service.generate_pseudonymous_id(
         internal_user_id=request.internal_user_id,
         purpose=purpose
     )
+)
 
     audit_service.log_event(
         internal_user_id=request.internal_user_id,
