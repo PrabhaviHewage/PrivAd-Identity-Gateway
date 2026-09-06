@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.database import get_db
 from app.models.consent import ConsentRecord, ConsentDecision
 from app.services.consent_service import consent_service
+from app.security.auth import require_api_key
 
 
 router = APIRouter(
@@ -14,7 +15,8 @@ router = APIRouter(
 
 @router.post(
     "/set",
-    response_model=ConsentDecision
+    response_model=ConsentDecision,
+    dependencies=[Depends(require_api_key)]
 )
 def set_consent(
     record: ConsentRecord,
