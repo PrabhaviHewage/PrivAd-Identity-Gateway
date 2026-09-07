@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from app.database.database import get_db
 from app.models.consent import ConsentRecord, ConsentDecision
 from app.services.consent_service import consent_service
-from app.security.auth import require_api_key
 from app.security.auth import require_role
 
 router = APIRouter(

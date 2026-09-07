@@ -12,9 +12,7 @@ from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
 from app.services.policy_service import policy_service
 from app.services.identity_service import identity_service
-from app.security.auth import require_api_key
 from app.security.auth import require_role
-
 router = APIRouter(
     prefix="/v1/identity",
     tags=["Identity"]

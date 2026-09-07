@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends
-
-from app.security.auth import require_api_key
 from app.services.audit_service import audit_service
 from app.security.auth import require_role
 
